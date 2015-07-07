@@ -124,7 +124,7 @@
     //模拟placeholder效果
     Webform.prototype.placeholder = function() {
         //支持placeholder，无需模拟
-        //if (this.input.placeholder) return;
+        if (this.input.placeholder) return;
 
         //给input增加模拟的html标签
         $('[placeholder]').each(function(i, dom) {
