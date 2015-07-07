@@ -13,7 +13,7 @@
     //class
     var css = {
         '.webform-placeholderWraper': 'position:relative;line-height:normal;overflow:hidden;display:inline-block;',
-        '.webform-placeholderLabel': 'visibility:visible;cursor:text;position:absolute;left:3px;top:4px;color:#aa9f9f;display:block;line-height:16px;font-size:12px;white-space:nowrap;',
+        '.webform-placeholderLabel': 'visibility:visible;cursor:text;position:absolute;left:0;top:0;color:#aa9f9f;display:block;line-height:16px;font-size:14px;white-space:nowrap;font-weight:normal;margin:0;',
         '.webform-alert': ' position:absolute;box-shadow:2px 2px 5px rgba(0,0,0,0.2),-2px 0 5px rgba(0,0,0,0.2)',
         '.webform-alert-filter': 'background:#F0F0F0; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#F0F0F0");background: linear-gradient(top, #FFFFFF, #F0F0F0);background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#F0F0F0));position:absolute;top:0;left:0;bottom:0;right:0;',
         '.webform-alert-content': ' padding:12px 15px;border:1px solid #bab3b3;border-top-color:#c4bbbb; border-radius:3px;font-size:12px;font-family:"微软雅黑";zoom:1;position:relative;',
@@ -29,7 +29,7 @@
             pattern: true
         }
         this.init();
-    }
+    };
 
     var attrs = {};
 
@@ -124,18 +124,24 @@
     //模拟placeholder效果
     Webform.prototype.placeholder = function() {
         //支持placeholder，无需模拟
-        if (this.input.placeholder) return;
+        //if (this.input.placeholder) return;
 
         //给input增加模拟的html标签
         $('[placeholder]').each(function(i, dom) {
             var input = $(dom);
             var text = input.attr('placeholder');
             var id = dom.id || Math.random(),
-                h = /textarea/i.test(dom.nodeName) ? parseInt(input.css('padding-top')) + 2 : (input.outerHeight() - 16) / 2,
-                w = input.outerWidth();
+                width = input.css('width'),
+                padding = input.css('padding'),
+                height = input.css('height'),
+                border = input.css('border'),
+                boxSizing = input.css('box-sizing'),
+                lineHeight = input.height() + 'px';
+            var style = ['padding:', padding, ';height:', height, ';line-height:', lineHeight, ';border:', border, ';border-color:transparent;box-sizing:', boxSizing].join('');
             dom.id = id;
-            input.wrap('<div class="webform-placeholderWraper" style="width:' + w + 'px"></div>').
-            after('<label for="' + id + '" class="webform-placeholderLabel" style="top:' + h + 'px">' + text + '</label>');
+            debugger
+            input.wrap('<div class="webform-placeholderWraper" style="width:' + width + '"></div>').
+            after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style + '">' + text + '</label>');
 
         }).on('keydown.placeholder', function() {
             var me = this;
