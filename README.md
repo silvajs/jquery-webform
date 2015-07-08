@@ -11,7 +11,7 @@ jquery-webform
 - *pattern*
 - *email*
 
-### 依赖
+## 依赖
 
 - jquery
 - [html5shiv](https://github.com/aFarkas/html5shiv)
@@ -26,13 +26,13 @@ jquery-webform
 ```
 ---
 
-### Demo
+## Demo
 
 请查看例子：[jquery-webform demo](http://htmlpreview.github.io/?https://github.com/silvajs/jquery-webform/blob/master/webform-test.html)
 
 ---
 
-### API
+## API
 
 #### forceSimulate
 *boolean* - default: `false`
