@@ -10,6 +10,7 @@ jquery-webform
 - *required*
 - *pattern*
 - *email*
+- *minlength*
 
 ## 依赖
 
@@ -60,6 +61,7 @@ jquery-webform
 $.fn.webform.messages = {
     required: '请填写此字段',
     pattern: '请匹配要求的格式',
-    email: '请输入有效的邮箱地址'
+    email: '请输入有效的邮箱地址',
+    minlength: '请至少输入{0}个字符'
 };
 ```
