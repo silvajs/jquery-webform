@@ -53,7 +53,7 @@ jquery-webform
 
 ```
 $.fn.webform.messages = {
-    required: "请填写此字段",
+    required: '请填写此字段',
     pattern: '请匹配要求的格式',
     email: '请输入有效的邮箱地址'
 };
