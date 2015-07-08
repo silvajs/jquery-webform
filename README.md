@@ -48,8 +48,7 @@ jquery-webform
 #### messages
 *object*
 
-在表单验证不通过时，给出的提示信息，可支持多语言。
-同理与html5的提示信息，也会获取元素上的title值作为提示信息的部分
+在表单验证不通过时，给出的提示信息，可支持多语言。同理与html5的提示信息，也会获取元素上的title值作为提示信息的部分内容
 
 ```
 $.fn.webform.messages = {
