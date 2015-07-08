@@ -33,11 +33,21 @@
     var inputElem = document.createElement('input');
 
     var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
-    var methods = ['required', 'pattern', 'email'];
+    var methods = ['required', 'pattern', 'email', 'minlength'];
 
     function getTitle(input) {
         var $input = $(input);
         return $input.attr('title') ? '：' + $input.attr('title') : '';
+    }
+
+    function format(template) {
+        var params = Array.prototype.slice.call(arguments, 1);
+        $.each(params, function(i, n) {
+            template = template.replace(new RegExp("\\{" + i + "\\}", "g"), function() {
+                return n;
+            });
+        });
+        return template;
     }
 
     //添加样式
@@ -140,14 +150,21 @@
         });
         for (var i = 0; i < inputs.length; i++) {
             var elem = inputs[i];
-            for (var j = 0; j < methods.length; j++) {
-                var method = methods[j];
-                if (this[method] && !this[method](elem)) {
-                    return false;
-                }
+            if (!this.runValidator(elem)) {
+                return false;
             }
         }
-        return false;
+        return true;
+    };
+
+    Webform.prototype.runValidator = function(elem) {
+        for (var j = 0; j < methods.length; j++) {
+            var method = methods[j];
+            if (this[method] && !this[method](elem)) {
+                return false;
+            }
+        }
+        return true;
     };
 
     //模拟placeholder效果
@@ -222,7 +239,6 @@
         if (input.attr('required') && input.val().length === 0) {
             var text = this.options.messages.required + getTitle(input);
             this.alert(text, input);
-            input.focus();
             return false;
         }
         return true;
@@ -238,7 +254,6 @@
             if (input.val().length > 0 && !reg.test(input.val())) {
                 var text = this.options.messages.pattern + getTitle(input);
                 this.alert(text, input);
-                input.textFocus();
                 return false;
             }
         }
@@ -253,7 +268,20 @@
         if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
             var text = this.options.messages.email + getTitle(input);
             this.alert(text, input);
-            input.focus();
+            return false;
+        }
+        return true;
+    };
+
+    Webform.prototype.minlength = function(input) {
+        if (!$(input).attr('minlength')) {
+            return true;
+        }
+        var minlength = parseInt($(input).attr('minlength'));
+        var value = input.value;
+        if (value.length < minlength) {
+            var text = format(this.options.messages.minlength, minlength);
+            this.alert(text, input);
             return false;
         }
         return true;
@@ -265,6 +293,7 @@
         }
         $(input).attr('autocomplete', this.options.autocomplete);
         this.alertDialog = new Alert(text, input);
+        input.focus();
     };
 
     Webform.prototype.removeAlert = function() {
@@ -328,7 +357,10 @@
                 var input = this;
                 setTimeout(function() {
                     var webform = $(input.form).data('webform');
-                    webform.runValidators();
+                    var pass = webform.runValidator(input);
+                    if (pass) {
+                        me.remove();
+                    }
                 }, 0);
             });
             return this;
@@ -370,7 +402,7 @@
     };
 
     var defaults = {
-        //forceSimulate: true,
+        forceSimulate: true,
         placeholder: true,
         autocomplete: 'off',
         messages: null
@@ -379,7 +411,8 @@
     $.fn.webform.messages = {
         required: '请填写此字段',
         pattern: '请匹配要求的格式',
-        email: '请输入有效的邮箱地址'
+        email: '请输入有效的邮箱地址',
+        minlength: '请至少输入{0}个字符'
     };
 
     $.fn.webform.addMethod = function(method, fn) {
