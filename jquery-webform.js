@@ -288,7 +288,7 @@
         return true;
     };
 
-    Webform.prototype.minlength = function(elem) {
+    Webform.prototype.maxlength = function(elem) {
         var $el = $(elem);
         if (!$el.attr('maxlength')) {
             return true;
