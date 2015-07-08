@@ -26,6 +26,12 @@ jquery-webform
 ```
 ---
 
+### Demo
+
+请查看例子：[jquery-webform demo](http://htmlpreview.github.io/?https://github.com/silvajs/jquery-webform/blob/master/webform-test.html)
+
+---
+
 ### API
 
 #### forceSimulate
