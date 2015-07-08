@@ -7,6 +7,7 @@ jquery-webform
 - *placeholder*
 - *required*
 - *pattern*
+- *email*
 
 **依赖于jQuery**
 
