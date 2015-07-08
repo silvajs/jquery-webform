@@ -62,19 +62,18 @@
         }
     })(css);
 
-    //文本框光标聚焦
     $.fn.textFocus = function(v) {
         var v = typeof v === 'undefined' ? 'all' : parseInt(v);
         this.each(function() {
             var range, len;
             try {
                 if (this.createTextRange) {
-                    range = this.createTextRange(); //文本框创建范围
-                    v === 'all' ? range.collapse(false) : range.move("character", v); //范围折叠
+                    range = this.createTextRange();
+                    v === 'all' ? range.collapse(false) : range.move("character", v);
                     range.select();
                 } else {
                     len = this.value.length;
-                    v === 'all' ? this.setSelectionRange(len, len) : this.setSelectionRange(v, v); //dom直接设置选区，然后focus
+                    v === 'all' ? this.setSelectionRange(len, len) : this.setSelectionRange(v, v);
                 }
             } catch (e) {
                 if (console && console.log) {
@@ -291,8 +290,7 @@
             var offset = this.$input.offset(),
                 x = offset.left + 5,
                 y = offset.top + this.$input.outerHeight() + 6;
-            this.add(text, x, y); //给输入框绑定keydown事件
-            //设置提示信息几秒后消失
+            this.add(text, x, y);
             this.setTimer();
         },
 
@@ -372,14 +370,14 @@
     };
 
     var defaults = {
-        forceSimulate: true,
+        //forceSimulate: true,
         placeholder: true,
         autocomplete: 'off',
         messages: null
     };
 
     $.fn.webform.messages = {
-        required: "请填写此字段",
+        required: '请填写此字段',
         pattern: '请匹配要求的格式',
         email: '请输入有效的邮箱地址'
     };
