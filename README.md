@@ -43,3 +43,17 @@ jquery-webform
 
 - `on`: 同input元素上的autocomplete属性
 - `off`: 同input元素上的autocomplete属性
+
+#### messages
+*object*
+
+在表单验证不通过时，给出的提示信息，可支持多语言。
+同理与html5的提示信息，也会获取元素上的title值作为提示信息的部分
+
+```
+$.fn.webform.messages = {
+    required: "请填写此字段",
+    pattern: '请匹配要求的格式',
+    email: '请输入有效的邮箱地址'
+};
+```
