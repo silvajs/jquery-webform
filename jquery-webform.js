@@ -183,13 +183,16 @@
                 'border-style:solid',
                 'border-color:transparent',
                 'box-sizing:' + boxSizing
-            ].join(';');
+            ];
+            if (input.val().length > 0) {
+                style.push('visibility:hidden');
+            }
             dom.id = id;
-            input.wrap('<div class="webform-placeholderWraper"></div>').after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style + '">' + text + '</label>');
+            input.wrap('<div class="webform-placeholderWraper"></div>').after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style.join(';') + '">' + text + '</label>');
 
         }).on('keydown.placeholder', function() {
             var me = this;
-            var placeholderLabel = $(this).next();
+            var placeholderLabel = $(this).next('.webform-placeholderLabel');
             setTimeout(function() {
                 if (me.value !== '') {
                     placeholderLabel.css('visibility', 'hidden');
@@ -244,7 +247,7 @@
     };
 
     Webform.prototype.email = function(input) {
-        if (input.type !== 'email') {
+        if ($(input).attr('type') !== 'email') {
             return true;
         }
         var value = input.value;
@@ -278,7 +281,7 @@
     };
 
     Alert.prototype = {
-        timeout: 5000,
+        timeout: 500000,
 
         init: function(text, input) {
             if (this.dialog) return;
@@ -369,7 +372,7 @@
     };
 
     var defaults = {
-        //forceSimulate: true,
+        forceSimulate: true,
         placeholder: true,
         autocomplete: 'off',
         messages: null
