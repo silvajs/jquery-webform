@@ -260,28 +260,44 @@
         return true;
     };
 
-    Webform.prototype.email = function(input) {
-        if ($(input).attr('type') !== 'email') {
+    Webform.prototype.email = function(elem) {
+        if ($(elem).attr('type') !== 'email') {
             return true;
         }
-        var value = input.value;
+        var value = elem.value;
         if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
-            var text = this.options.messages.email + getTitle(input);
-            this.alert(text, input);
+            var text = this.options.messages.email + getTitle(elem);
+            this.alert(text, elem);
             return false;
         }
         return true;
     };
 
-    Webform.prototype.minlength = function(input) {
-        if (!$(input).attr('minlength')) {
+    Webform.prototype.minlength = function(elem) {
+        var $el = $(elem);
+        if (!$el.attr('minlength')) {
             return true;
         }
-        var minlength = parseInt($(input).attr('minlength'));
-        var value = input.value;
+        var minlength = parseInt($el.attr('minlength'));
+        var value = $el.val();
         if (value.length < minlength) {
             var text = format(this.options.messages.minlength, minlength);
-            this.alert(text, input);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
+    };
+
+    Webform.prototype.minlength = function(elem) {
+        var $el = $(elem);
+        if (!$el.attr('maxlength')) {
+            return true;
+        }
+        var maxlength = parseInt($el.attr('maxlength'));
+        var value = $el.val();
+        if (value.length > maxlength) {
+            var text = format(this.options.messages.maxlength, maxlength);
+            this.alert(text, $el);
             return false;
         }
         return true;
@@ -412,7 +428,8 @@
         required: '请填写此字段',
         pattern: '请匹配要求的格式',
         email: '请输入有效的邮箱地址',
-        minlength: '请至少输入{0}个字符'
+        minlength: '请至少输入{0}个字符',
+        maxlength: '最多输入{0}个字符'
     };
 
     $.fn.webform.addMethod = function(method, fn) {
@@ -422,5 +439,6 @@
         methods.push(method);
         Webform.prototype[method] = fn;
     };
+
 
 })(jQuery);
