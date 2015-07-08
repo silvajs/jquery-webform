@@ -29,14 +29,17 @@ jquery-webform
 
 #### forceSimulate
 *boolean* - default: `false`
+
 强制使用模拟的验证策略，忽视html5的验证，哪怕浏览器支持html5，一般情况下不建议设置为`true`
 
 #### placeholder
 *boolean* - default: `true`
+
 - `true`: 在不支持placeholder的浏览器，同样根据input元素上的placeholder模拟出同样的效果
 - `false`: 不进行模拟动作
 
 #### autocomplete
 *string* - default: `off`
+
 - `on`: 同input元素上的autocomplete属性
 - `off`: 同input元素上的autocomplete属性
