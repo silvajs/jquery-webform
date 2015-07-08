@@ -1,7 +1,7 @@
 jquery-webform
 ==========
 
-最新一代的html5表单验证插件，跟随html5，兼容IE6+
+**最新一代的html5表单验证插件，跟随html5，兼容IE6+**
 
 在提交表单时，利用html5的表单验证策略，如果浏览器支持html5则使用原生的表单验证，如果不支持，则模拟出一样的验证效果。目前支持的html5属性有：
 
@@ -24,6 +24,7 @@ jquery-webform
     <script src="lib/respond.min.js"></script>
 <![endif]-->
 ```
+---
 
 ### API
 
