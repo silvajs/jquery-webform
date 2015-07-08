@@ -1,7 +1,7 @@
 jquery-webform
 ==========
 
-兼容所有的浏览器支持表单的html5属性，表现形式与谷歌和火狐一致，目前支持：
+在提交表单时，利用html5的表单验证策略，如果浏览器支持html5则使用原生的表单验证，如果不支持，则模拟出一样的验证效果：
 
 - *autofocus*
 - *placeholder*
@@ -9,20 +9,17 @@ jquery-webform
 - *pattern*
 - *email*
 
-**依赖于jQuery**
+**依赖**
 
-在页面中就像写html5一样，只需要额外加载`webform.js`即可。  
+- jquery
+- [html5shiv](https://github.com/aFarkas/html5shiv)
 
+如果兼容IE8，同时使用了bootstrap，需要添加[Respond](https://github.com/scottjehl/Respond)。
+列如：
 ```
-<form>
-    <input type="text" placeholder="用户/电话/邮箱用户/电话/邮箱用户/电话/邮箱" required autofocus title="请输入3个字母" pattern="^[a-zA-Z]{3}$" style="height: 40px; width: 200px" />
-    <hr />
-    <input type="text" placeholder="电子邮箱" required="required" title="输入您的邮箱" />
-    <hr>
-    <input type="number" max="10" required="required">
-    <input type="range" />
-    <textarea required="required" placeholder="邮箱" style="height: 60px;"></textarea>
-    <hr>
-    <button type="submit">提交</button>
-</form>
+<!--[if lt IE 9]>
+    <script src="lib/html5shiv.min.js"></script>
+    <script src="lib/respond.min.js"></script>
+<![endif]-->
 ```
+
