@@ -1,46 +1,44 @@
 /*
  *   兼容所有的浏览器支持表单的html5属性，表现形式与谷歌和火狐一致，目前支持：
- *       autofocus、placeholder、required、pattern
- *   共享此文件的目的是希望有人能帮忙完善，减少在表单处理方面的工作量，并能不吝啬的共享出来。
+ *       autofocus、placeholder、required、pattern、email
  *   如果您对此进行了改进，请发一份到我的邮箱里，谢谢！
  *   @author Silva Zhou
  *   @email zhoulinspq2006@126.com
  *   @qq 294692513
+ *   @site https://github.com/silvajs/jquery-webform
  */
 ;
 (function($) {
 
     //class
     var css = {
-        '.webform-placeholderWraper': 'position:relative;line-height:normal;overflow:hidden;display:inline-block;',
+        '.webform-placeholderWraper': 'position:relative;line-height:normal;overflow:hidden;',
         '.webform-placeholderLabel': 'visibility:visible;cursor:text;position:absolute;left:0;top:0;color:#aa9f9f;display:block;line-height:16px;font-size:14px;white-space:nowrap;font-weight:normal;margin:0;',
         '.webform-alert': ' position:absolute;box-shadow:2px 2px 5px rgba(0,0,0,0.2),-2px 0 5px rgba(0,0,0,0.2)',
-        '.webform-alert-filter': 'background:#F0F0F0; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#F0F0F0");background: linear-gradient(top, #FFFFFF, #F0F0F0);background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#F0F0F0));position:absolute;top:0;left:0;bottom:0;right:0;',
+        '.webform-alert-filter': 'background:#F0F0F0; position:absolute;top:0;left:0;bottom:0;right:0;background-repeat: repeat-x;',
         '.webform-alert-content': ' padding:12px 15px;border:1px solid #bab3b3;border-top-color:#c4bbbb; border-radius:3px;font-size:12px;font-family:"微软雅黑";zoom:1;position:relative;',
         '.webform-alert-icon': ' position:absolute;width:0;height:0;border:6px solid #c4bbbb;border-top-color:transparent;border-left-color:transparent;border-right-color:transparent;top:-12px;left:10px;z-index:2;',
         '.webform-alert-icon2': ' border-bottom-color:#fff;top:-11px;'
     };
 
-    var Webform = function() {
-        this.config = {
-            placeholder: true, //设为false取消模拟
-            autofocus: true,
-            required: true,
-            pattern: true
-        }
-        this.init();
-    };
+    var gradient = [
+        'background-image: linear-gradient(top, #FFFFFF, #F0F0F0);background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#F0F0F0))',
+        'filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#F0F0F0")',
+        'background-image: -o-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%)',
+        'background-image: linear-gradient(to bottom, #FFFFFF 0%, #F0F0F0 100%)'
+    ];
 
-    var attrs = {};
+    css['.webform-alert-filter'] += gradient.join(';');
 
     var inputElem = document.createElement('input');
 
-    var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step'.split(' ');
+    var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
+    var methods = ['required', 'pattern', 'email'];
 
     function getTitle(input) {
-        return (input.attr('title') ? '：' + input.attr('title') : '') + '。';
+        var $input = $(input);
+        return $input.attr('title') ? '：' + $input.attr('title') : '';
     }
-
 
     //添加样式
     ;
@@ -69,79 +67,125 @@
         var v = typeof v === 'undefined' ? 'all' : parseInt(v);
         this.each(function() {
             var range, len;
-            if (this.createTextRange) {
-                range = this.createTextRange(); //文本框创建范围
-                v === 'all' ? range.collapse(false) : range.move("character", v); //范围折叠
-                range.select();
-            } else {
-                len = this.value.length;
-                v === 'all' ? this.setSelectionRange(len, len) : this.setSelectionRange(v, v); //dom直接设置选区，然后focus
+            try {
+                if (this.createTextRange) {
+                    range = this.createTextRange(); //文本框创建范围
+                    v === 'all' ? range.collapse(false) : range.move("character", v); //范围折叠
+                    range.select();
+                } else {
+                    len = this.value.length;
+                    v === 'all' ? this.setSelectionRange(len, len) : this.setSelectionRange(v, v); //dom直接设置选区，然后focus
+                }
+            } catch (e) {
+                if (console && console.log) {
+                    console.log(e.message);
+                }
             }
             this.focus();
         });
         return this;
-    }
+    };
 
-
-
-    //返回是否支持以下html5属性
-    Webform.prototype.input = (function(props) {
-        for (var i = 0, len = props.length; i < len; i++) {
-            attrs[props[i]] = !!(props[i] in inputElem);
-        }
-        if (attrs.list) {
-            attrs.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
-        }
-        return attrs;
-    })(html5Attrs);
-
-    Webform.prototype.init = function() {
+    var Webform = function(form, options) {
         var me = this;
-        this.config.placeholder && this.placeholder();
-        this.config.autofocus && this.autofocus();
-        $('form').submit(function(e) {
-            return me.submit(this);
-        });
-        $(document).click(function(e) {
-            me.alertDialog && me.alertDialog.remove();
-        });
-    }
+        this.options = $.extend({}, defaults, options || {});
+        this.init(form);
+    };
 
-    //表单提交时的验证
-    Webform.prototype.submit = function(form) {
-        var inputsArr = $.grep(form.elements, function(elem, i) {
-            return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
-        });
-        for (var i = 0; i < inputsArr.length; i++) {
-            if ((this.config.required && !this.required(inputsArr[i])) || (this.config.pattern && !this.pattern(inputsArr[i]))) {
-                return false;
+    Webform.prototype.init = function(form) {
+        this.$form = $(form);
+        if (this.options.forceSimulate) {
+            this.$form.attr('novalidate', 'novalidate');
+        }
+        this.setInput(html5Attrs);
+        this.runMethods();
+        this.registeEvents();
+    };
+
+    Webform.prototype.setInput = function(props) {
+        this.input = {};
+        for (var i = 0, len = props.length; i < len; i++) {
+            if (this.options.forceSimulate) {
+                this.input[props[i]] = false;
+            } else {
+                this.input[props[i]] = !!(props[i] in inputElem);
             }
         }
-        return true;
-    }
+        if (this.input.list) {
+            this.input.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
+        }
+    };
 
+    Webform.prototype.runMethods = function() {
+        this.placeholder();
+        this.autofocus();
+    };
+
+    Webform.prototype.registeEvents = function() {
+        var me = this;
+        this.$form.on('submit', function(e) {
+            return me.runValidators();
+        });
+        this.$form.on('click', '[type="submit"]', function(e) {
+            e.stopPropagation();
+        });
+        $(document).click(function() {
+            me.removeAlert();
+        });
+    };
+
+    Webform.prototype.runValidators = function() {
+        var form = this.$form.get(0);
+        var inputs = $.grep(form.elements, function(elem, i) {
+            return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
+        });
+        for (var i = 0; i < inputs.length; i++) {
+            var elem = inputs[i];
+            for (var j = 0; j < methods.length; j++) {
+                var method = methods[j];
+                if (this[method] && !this[method](elem)) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    };
 
     //模拟placeholder效果
     Webform.prototype.placeholder = function() {
         //支持placeholder，无需模拟
-        if (this.input.placeholder) return;
+        if (this.input.placeholder || !this.options.placeholder) return;
 
         //给input增加模拟的html标签
         $('[placeholder]').each(function(i, dom) {
             var input = $(dom);
             var text = input.attr('placeholder');
+            input.removeAttr('placeholder');
             var id = dom.id || Math.random(),
-                width = input.css('width'),
-                padding = input.css('padding'),
+                paddingLeft = input.css('padding-left'),
+                paddingTop = input.css('padding-top'),
+                paddingBottom = input.css('padding-bottom'),
                 height = input.css('height'),
-                border = input.css('border'),
+                borderLeftWidth = input.css('border-left-width'),
+                borderTopWidth = input.css('border-top-width'),
+                borderBottomWidth = input.css('border-bottom-width'),
                 boxSizing = input.css('box-sizing'),
                 lineHeight = input.height() + 'px';
-            var style = ['padding:', padding, ';height:', height, ';line-height:', lineHeight, ';border:', border, ';border-color:transparent;box-sizing:', boxSizing].join('');
+            var style = [
+                'padding-left:' + paddingLeft,
+                'padding-top:' + paddingTop,
+                'padding-bottom:' + paddingBottom,
+                'height:' + height,
+                'line-height:' + lineHeight,
+                'border-left-width:' + borderLeftWidth,
+                'border-top-width:' + borderTopWidth,
+                'border-bottom-width:' + borderBottomWidth,
+                'border-style:solid',
+                'border-color:transparent',
+                'box-sizing:' + boxSizing
+            ].join(';');
             dom.id = id;
-            debugger
-            input.wrap('<div class="webform-placeholderWraper" style="width:' + width + '"></div>').
-            after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style + '">' + text + '</label>');
+            input.wrap('<div class="webform-placeholderWraper"></div>').after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style + '">' + text + '</label>');
 
         }).on('keydown.placeholder', function() {
             var me = this;
@@ -174,13 +218,13 @@
 
         var input = $(elem);
         if (input.attr('required') && input.val().length === 0) {
-            var text = '请填写此字段' + getTitle(input);
-            this.alertDialog = this.alert(text, input);
-            input.textFocus();
+            var text = this.options.messages.required + getTitle(input);
+            this.alert(text, input);
+            input.focus();
             return false;
         }
         return true;
-    }
+    };
 
     //pattern验证输入
     Webform.prototype.pattern = function(elem) {
@@ -190,36 +234,65 @@
         if (input.attr('pattern')) {
             var reg = new RegExp(input.attr('pattern'));
             if (input.val().length > 0 && !reg.test(input.val())) {
-                var text = '请匹配要求的格式' + getTitle(input);
-                this.alertDialog = this.alert(text, input);
+                var text = this.options.messages.pattern + getTitle(input);
+                this.alert(text, input);
                 input.textFocus();
                 return false;
             }
         }
         return true;
-    }
+    };
 
+    Webform.prototype.email = function(input) {
+        if (input.type !== 'email') {
+            return true;
+        }
+        var value = input.value;
+        if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
+            var text = this.options.messages.email + getTitle(input);
+            this.alert(text, input);
+            input.focus();
+            return false;
+        }
+        return true;
+    };
 
+    Webform.prototype.alert = function(text, input) {
+        if (this.alertDialog) {
+            this.alertDialog.remove();
+        }
+        $(input).attr('autocomplete', this.options.autocomplete);
+        this.alertDialog = new Alert(text, input);
+    };
+
+    Webform.prototype.removeAlert = function() {
+        if (this.alertDialog) {
+            this.alertDialog.remove();
+            this.alertDialog = null;
+        }
+    };
 
     //弹出提示信息
     var Alert = function(text, input) {
-        return new Alert.prototype.init(text, input);
-    }
+        this.init(text, input);
+    };
 
     Alert.prototype = {
         timeout: 5000,
+
         init: function(text, input) {
             if (this.dialog) return;
 
             //显示提示信息
-            var offset = input.offset(),
+            this.$input = $(input);
+            var offset = this.$input.offset(),
                 x = offset.left + 5,
-                y = offset.top + input.outerHeight() + 6;
-            this.input = input;
-            this.add(text, x, y).on(); //给输入框绑定keydown事件
+                y = offset.top + this.$input.outerHeight() + 6;
+            this.add(text, x, y); //给输入框绑定keydown事件
             //设置提示信息几秒后消失
-            this.setTime();
+            this.setTimer();
         },
+
         add: function(text, x, y) {
             var me = this;
             var html = ['<div class="webform-alert">',
@@ -237,63 +310,83 @@
                 top: (y || 0) + 'px'
             });
             $(document.body).append(this.dialog);
+            this.registerEvents();
             return this;
         },
+
         remove: function() {
             this.dialog && this.dialog.remove();
             this.dialog = null;
-            this.time && clearTimeout(this.time);
+            this.timer && clearTimeout(this.timer);
             this.off();
         },
-        on: function() {
-            var me = this;
-            this.input.on('keydown.webform', function() {
-                var input = $(this);
-                setTimeout(function() {
-                    var value = input.val();
-                    var title = getTitle(input);
-                    me.resetTime();
-                    if (input.attr('required') && value.length === 0) {
-                        var text = '请填写此字段' + title;
-                        me.content(text);
-                    } else if (input.attr('pattern') && value.length > 0 && !(new RegExp(input.attr('pattern'))).test(value)) {
-                        var text = '请匹配要求的格式' + title;
-                        me.content(text);
-                    } else {
-                        me.remove();
-                    }
 
+        registerEvents: function() {
+            var me = this;
+            this.$input.on('keydown.webform', function() {
+                var input = this;
+                setTimeout(function() {
+                    var webform = $(input.form).data('webform');
+                    webform.runValidators();
                 }, 0);
             });
             return this;
         },
+
         off: function() {
-            //删除相应的keydown事件
-            this.input.off('keydown.webform');
+            this.$input.off('keydown.webform');
         },
-        setTime: function() {
+
+        setTimer: function() {
             var me = this;
-            this.time = setTimeout(function() {
+            this.timer = setTimeout(function() {
                 me.remove();
-                clearTimeout(me.time);
+                me.timer = null;
             }, this.timeout);
         },
-        resetTime: function() {
-            this.time && clearTimeout(this.time);
-            this.setTime();
+
+        resetTimer: function() {
+            this.timer && clearTimeout(this.timer);
+            this.setTimer();
         },
+
         content: function(text) {
             if (!this.dialog) return;
             this.dialog.find('.webform-alert-content').html(text);
         }
     };
 
-    Alert.prototype.init.prototype = Alert.prototype;
-    Webform.prototype.alert = Alert;
+    $.fn.webform = function(options) {
+        this.each(function() {
+            var data = $(this).data('webform');
+            if (!data) {
+                options = options || {};
+                var messages = $.extend({}, $.fn.webform.messages, options.messages || {});
+                options.messages = messages;
+                $(this).data('webform', new Webform(this, options));
+            }
+        });
+    };
 
+    var defaults = {
+        //forceSimulate: true,
+        placeholder: true,
+        autocomplete: 'off',
+        messages: null
+    };
 
-    $(function() {
-        new Webform();
-    });
+    $.fn.webform.messages = {
+        required: "请填写此字段",
+        pattern: '请匹配要求的格式',
+        email: '请输入有效的邮箱地址'
+    };
+
+    $.fn.webform.addMethod = function(method, fn) {
+        if (Webform.prototype[method]) {
+            throw 'this method ' + method + ' has been existed';
+        }
+        methods.push(method);
+        Webform.prototype[method] = fn;
+    };
 
 })(jQuery);

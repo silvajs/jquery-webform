@@ -3,27 +3,67 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>html5表单属性模拟</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.css" />
+    <!--[if lt IE 9]>
+    <script src="lib/html5shiv.min.js"></script>
+    <script src="lib/respond.min.js"></script>
+    <![endif]-->
 </head>
-
 <body>
+    <h1 class="text-center">jquery webform test</h1>
+    <hr />
+    <div class="container">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="邮箱" required="required" autofocus />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">密码：</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputPassword3" placeholder="至少6个字符" required="required" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数字：</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" max="10" placeholder="10以内的数字" required="required" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">描述：</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" rows="3" placeholder="200个字以内" maxlength="200" ></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox">Remember me</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Sign in</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    <form>
-        <input type="text" placeholder="用户/电话/邮箱用户/电话/邮箱用户/电话/邮箱" required autofocus title="请输入3个字母" pattern="^[a-zA-Z]{3}$" style="height: 40px; line-height: 40px; width: 200px" />
-        <hr />
-        <input type="text" placeholder="电子邮箱" required="required" title="输入您的邮箱" />
-        <hr>
-        <input type="number" max="10" required="required">
-        <input type="range" />
-        <textarea required="required" placeholder="邮箱" style="height: 60px;"></textarea>
-        <hr>
-        <button type="submit">提交</button>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/bootstrap.js"></script>
+    <script src="jquery-webform.js"></script>
+    <script type="text/javascript">
+        $('form').webform({
+            // messages: {
+            //     required: 'hi'
+            // }
+        });
+    </script>
 
-    </form>
-
-
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="jquery-webform.js"></script>
-  
-  
 </body>
 </html>
