@@ -418,7 +418,7 @@
             return true;
         }
         var value = $el.val();
-        if (!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) || (hasValue($el) && value.length ===0)) {
+        if (!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) || (hasValue($el) && value.length === 0)) {
             var text = this.options.messages.number + getTitle($el);
             this.alert(text, $el);
             return false;
@@ -486,7 +486,9 @@
 
     $.fn.webform.addMethod = function(method, fn) {
         if (Webform.prototype[method]) {
-            throw 'this method ' + method + ' has been existed';
+            if (console && console.log) {
+                console.log('The method "' + method + '" has been existed, and you will rewrite this method');
+            }
         }
         methods.push(method);
         Webform.prototype[method] = fn;
