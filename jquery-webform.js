@@ -18,7 +18,8 @@
         '.webform-alert-filter': 'background:#F0F0F0; position:absolute;top:0;left:0;bottom:0;right:0;background-repeat: repeat-x;',
         '.webform-alert-content': 'padding:12px 15px;border:1px solid #bab3b3;border-top-color:#c4bbbb; border-radius:3px;font-size:12px;font-family:"微软雅黑";zoom:1;position:relative;display:inline-block',
         '.webform-alert-icon': ' position:absolute;width:0;height:0;border:6px solid #c4bbbb;border-top-color:transparent;border-left-color:transparent;border-right-color:transparent;top:-12px;left:10px;z-index:2;_display:none',
-        '.webform-alert-icon2': ' border-bottom-color:#fff;top:-11px;'
+        '.webform-alert-icon2': ' border-bottom-color:#fff;top:-11px;',
+        '.webform-title': 'color:gray;margin-left:5px;'
     };
 
     var gradient = [
@@ -33,11 +34,11 @@
     var inputElem = document.createElement('input');
 
     var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
-    var methods = ['required', 'pattern', 'email', 'minlength'];
+    var methods = ['required', 'pattern', 'email', 'minlength', 'maxlength', 'number', 'min', 'max'];
 
     function getTitle(input) {
-        var $input = $(input);
-        return $input.attr('title') ? '：' + $input.attr('title') : '';
+        var $el = $(input);
+        return $el.attr('title') ? '：<span class="webform-title">' + $el.attr('title') : '</span>';
     }
 
     function format(template) {
@@ -48,6 +49,17 @@
             });
         });
         return template;
+    }
+
+    function hasValue($el) {
+        var elem = $el.get(0);
+        if ($el.val().length > 0) {
+            return true;
+        }
+        if (elem.validity && elem.validity.badInput) {
+            return true;
+        }
+        return false;
     }
 
     //添加样式
@@ -95,6 +107,92 @@
         return this;
     };
 
+    //弹出提示信息
+    var Alert = function(text, $el) {
+        this.$el = $el;
+        this.init(text, $el);
+    };
+
+    Alert.prototype = {
+        timeout: 500000,
+
+        init: function(text, $el) {
+            if (this.dialog) return;
+
+            //显示提示信息
+            var offset = this.$el.offset(),
+                x = offset.left + 5,
+                y = offset.top + this.$el.outerHeight() + 6;
+            this.add(text, x, y);
+            this.setTimer();
+        },
+
+        add: function(text, x, y) {
+            var me = this;
+            var html = ['<div class="webform-alert">',
+                '<div class="webform-alert-icon"></div>',
+                '<div class="webform-alert-icon webform-alert-icon2"></div>',
+                '<div class="webform-alert-filter"></div>',
+                '<span class="webform-alert-content">',
+                text,
+                '</span>',
+                '</div>'
+            ].join('');
+            this.dialog = $(html);
+            this.dialog.css({
+                left: (x || 0) + 'px',
+                top: (y || 0) + 'px'
+            });
+            $(document.body).append(this.dialog);
+            this.registerEvents();
+            return this;
+        },
+
+        remove: function() {
+            this.dialog && this.dialog.remove();
+            this.dialog = null;
+            this.timer && clearTimeout(this.timer);
+            this.off();
+        },
+
+        registerEvents: function() {
+            var me = this;
+            this.$el.on('keydown.webform', function() {
+                var input = this;
+                setTimeout(function() {
+                    var webform = $(input.form).data('webform');
+                    var pass = webform.runValidator($(input));
+                    if (pass) {
+                        me.remove();
+                    }
+                }, 0);
+            });
+            return this;
+        },
+
+        off: function() {
+            this.$el.off('keydown.webform');
+        },
+
+        setTimer: function() {
+            var me = this;
+            this.timer = setTimeout(function() {
+                me.remove();
+                me.timer = null;
+            }, this.timeout);
+        },
+
+        resetTimer: function() {
+            this.timer && clearTimeout(this.timer);
+            this.setTimer();
+        },
+
+        content: function(text) {
+            if (!this.dialog) return;
+            this.dialog.find('.webform-alert-content').html(text);
+        }
+    };
+
     var Webform = function(form, options) {
         var me = this;
         this.options = $.extend({}, defaults, options || {});
@@ -114,11 +212,7 @@
     Webform.prototype.setInput = function(props) {
         this.input = {};
         for (var i = 0, len = props.length; i < len; i++) {
-            if (this.options.forceSimulate) {
-                this.input[props[i]] = false;
-            } else {
-                this.input[props[i]] = !!(props[i] in inputElem);
-            }
+            this.input[props[i]] = !!(props[i] in inputElem);
         }
         if (this.input.list) {
             this.input.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
@@ -133,6 +227,7 @@
     Webform.prototype.registeEvents = function() {
         var me = this;
         this.$form.on('submit', function(e) {
+            e.preventDefault();
             return me.runValidators();
         });
         this.$form.on('click', '[type="submit"]', function(e) {
@@ -149,22 +244,38 @@
             return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
         });
         for (var i = 0; i < inputs.length; i++) {
-            var elem = inputs[i];
-            if (!this.runValidator(elem)) {
+            var $el = $(inputs[i]);
+            if (!this.runValidator($el)) {
                 return false;
             }
         }
         return true;
     };
 
-    Webform.prototype.runValidator = function(elem) {
+    Webform.prototype.runValidator = function($el) {
         for (var j = 0; j < methods.length; j++) {
             var method = methods[j];
-            if (this[method] && !this[method](elem)) {
+            if (this[method] && !this[method]($el)) {
                 return false;
             }
         }
         return true;
+    };
+
+    Webform.prototype.alert = function(text, input) {
+        if (this.alertDialog) {
+            this.alertDialog.remove();
+        }
+        $(input).attr('autocomplete', this.options.autocomplete);
+        this.alertDialog = new Alert(text, input);
+        input.focus();
+    };
+
+    Webform.prototype.removeAlert = function() {
+        if (this.alertDialog) {
+            this.alertDialog.remove();
+            this.alertDialog = null;
+        }
     };
 
     //模拟placeholder效果
@@ -208,10 +319,10 @@
             input.wrap('<div class="webform-placeholderWraper"></div>').after('<label for="' + id + '" class="webform-placeholderLabel" style="' + style.join(';') + '">' + text + '</label>');
 
         }).on('keydown.placeholder', function() {
-            var me = this;
+            var $el = $(this);
             var placeholderLabel = $(this).next('.webform-placeholderLabel');
             setTimeout(function() {
-                if (me.value !== '') {
+                if (hasValue($el)) {
                     placeholderLabel.css('visibility', 'hidden');
                 } else {
                     placeholderLabel.css('visibility', 'visible');
@@ -227,55 +338,54 @@
         if (this.input.autofocus) return;
 
         setTimeout(function() {
-            $('[autofocus]').last().focus();
+            $('[autofocus]').last().textFocus();
         }, 0);
     };
 
 
     //文本框必须输入
-    Webform.prototype.required = function(elem) {
-        if (this.input.required) return true;
+    Webform.prototype.required = function($el) {
+        if (!$el.attr('required')) {
+            return true;
+        }
 
-        var input = $(elem);
-        if (input.attr('required') && input.val().length === 0) {
-            var text = this.options.messages.required + getTitle(input);
-            this.alert(text, input);
+        if (!hasValue($el)) {
+            var text = this.options.messages.required + getTitle($el);
+            this.alert(text, $el);
             return false;
         }
         return true;
     };
 
     //pattern验证输入
-    Webform.prototype.pattern = function(elem) {
-        if (this.input.pattern) return true;
-
-        var input = $(elem);
-        if (input.attr('pattern')) {
-            var reg = new RegExp(input.attr('pattern'));
-            if (input.val().length > 0 && !reg.test(input.val())) {
-                var text = this.options.messages.pattern + getTitle(input);
-                this.alert(text, input);
-                return false;
-            }
-        }
-        return true;
-    };
-
-    Webform.prototype.email = function(elem) {
-        if ($(elem).attr('type') !== 'email') {
+    Webform.prototype.pattern = function($el) {
+        if (!$el.attr('pattern')) {
             return true;
         }
-        var value = elem.value;
-        if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
-            var text = this.options.messages.email + getTitle(elem);
-            this.alert(text, elem);
+
+        var reg = new RegExp($el.attr('pattern'));
+        if ($el.val().length > 0 && !reg.test($el.val())) {
+            var text = this.options.messages.pattern + getTitle($el);
+            this.alert(text, $el);
             return false;
         }
         return true;
     };
 
-    Webform.prototype.minlength = function(elem) {
-        var $el = $(elem);
+    Webform.prototype.email = function($el) {
+        if ($el.attr('type') !== 'email') {
+            return true;
+        }
+        var value = $el.val();
+        if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
+            var text = this.options.messages.email + getTitle($el);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
+    };
+
+    Webform.prototype.minlength = function($el) {
         if (!$el.attr('minlength')) {
             return true;
         }
@@ -289,8 +399,7 @@
         return true;
     };
 
-    Webform.prototype.maxlength = function(elem) {
-        var $el = $(elem);
+    Webform.prototype.maxlength = function($el) {
         if (!$el.attr('maxlength')) {
             return true;
         }
@@ -304,106 +413,45 @@
         return true;
     };
 
-    Webform.prototype.alert = function(text, input) {
-        if (this.alertDialog) {
-            this.alertDialog.remove();
+    Webform.prototype.number = function($el) {
+        if ($el.attr('type') !== 'number') {
+            return true;
         }
-        $(input).attr('autocomplete', this.options.autocomplete);
-        this.alertDialog = new Alert(text, input);
-        input.focus();
+        var value = $el.val();
+        if (!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) || (hasValue($el) && value.length ===0)) {
+            var text = this.options.messages.number + getTitle($el);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
     };
 
-    Webform.prototype.removeAlert = function() {
-        if (this.alertDialog) {
-            this.alertDialog.remove();
-            this.alertDialog = null;
+    Webform.prototype.min = function($el) {
+        if (!$el.attr('min')) {
+            return true;
         }
+        var value = parseFloat($el.val());
+        var min = parseFloat($el.attr('min'));
+        if (value < min) {
+            var text = format(this.options.messages.min, min) + getTitle($el);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
     };
 
-    //弹出提示信息
-    var Alert = function(text, input) {
-        this.init(text, input);
-    };
-
-    Alert.prototype = {
-        timeout: 500000,
-
-        init: function(text, input) {
-            if (this.dialog) return;
-
-            //显示提示信息
-            this.$input = $(input);
-            var offset = this.$input.offset(),
-                x = offset.left + 5,
-                y = offset.top + this.$input.outerHeight() + 6;
-            this.add(text, x, y);
-            this.setTimer();
-        },
-
-        add: function(text, x, y) {
-            var me = this;
-            var html = ['<div class="webform-alert">',
-                '<div class="webform-alert-icon"></div>',
-                '<div class="webform-alert-icon webform-alert-icon2"></div>',
-                '<div class="webform-alert-filter"></div>',
-                '<span class="webform-alert-content">',
-                text,
-                '</span>',
-                '</div>'
-            ].join('');
-            this.dialog = $(html);
-            this.dialog.css({
-                left: (x || 0) + 'px',
-                top: (y || 0) + 'px'
-            });
-            $(document.body).append(this.dialog);
-            this.registerEvents();
-            return this;
-        },
-
-        remove: function() {
-            this.dialog && this.dialog.remove();
-            this.dialog = null;
-            this.timer && clearTimeout(this.timer);
-            this.off();
-        },
-
-        registerEvents: function() {
-            var me = this;
-            this.$input.on('keydown.webform', function() {
-                var input = this;
-                setTimeout(function() {
-                    var webform = $(input.form).data('webform');
-                    var pass = webform.runValidator(input);
-                    if (pass) {
-                        me.remove();
-                    }
-                }, 0);
-            });
-            return this;
-        },
-
-        off: function() {
-            this.$input.off('keydown.webform');
-        },
-
-        setTimer: function() {
-            var me = this;
-            this.timer = setTimeout(function() {
-                me.remove();
-                me.timer = null;
-            }, this.timeout);
-        },
-
-        resetTimer: function() {
-            this.timer && clearTimeout(this.timer);
-            this.setTimer();
-        },
-
-        content: function(text) {
-            if (!this.dialog) return;
-            this.dialog.find('.webform-alert-content').html(text);
+    Webform.prototype.max = function($el) {
+        if (!$el.attr('max')) {
+            return true;
         }
+        var value = parseFloat($el.val());
+        var max = parseFloat($el.attr('max'));
+        if (value > max) {
+            var text = format(this.options.messages.max, max) + getTitle($el);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
     };
 
     $.fn.webform = function(options) {
@@ -430,7 +478,10 @@
         pattern: '请匹配要求的格式',
         email: '请输入有效的邮箱地址',
         minlength: '请至少输入{0}个字符',
-        maxlength: '最多输入{0}个字符'
+        maxlength: '最多输入{0}个字符',
+        number: '请输入一个数字',
+        min: '值必须大于或等于{0}',
+        max: '值必须小于或等于{0}'
     };
 
     $.fn.webform.addMethod = function(method, fn) {
