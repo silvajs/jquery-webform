@@ -3,15 +3,23 @@ jquery-webform
 
 **最新一代的html5表单验证插件，跟随html5，兼容IE6+**
 
-在提交表单时，利用html5的表单验证策略，如果浏览器支持html5则使用原生的表单验证，如果不支持，则模拟出一样的验证效果。目前支持的html5属性有：
+在提交表单时，利用html5的表单验证策略，如果浏览器支持html5则使用原生的表单验证，如果不支持，则模拟出一样的验证效果。
+
+目前支持的input type：
+
+- *email*
+- *number*
+
+目前支持的html5属性有：
 
 - *autofocus*
 - *placeholder*
 - *required*
 - *pattern*
-- *email*
 - *minlength*
 - *maxlength*
+- *min*
+- *max*
 
 ## 依赖
 
@@ -64,6 +72,9 @@ $.fn.webform.messages = {
     pattern: '请匹配要求的格式',
     email: '请输入有效的邮箱地址',
     minlength: '请至少输入{0}个字符',
-    maxlength: '最多输入{0}个字符'
+    maxlength: '最多输入{0}个字符',
+    number: '请输入一个数字',
+    min: '值必须大于或等于{0}',
+    max: '值必须小于或等于{0}'
 };
 ```
