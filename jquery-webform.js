@@ -481,7 +481,7 @@
     };
 
     var defaults = {
-        forceSimulate: true,
+        forceSimulate: false,
         placeholder: true,
         autocomplete: 'off',
         messages: null
