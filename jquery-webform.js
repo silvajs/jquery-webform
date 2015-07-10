@@ -19,7 +19,7 @@
         '.webform-alert-content': 'padding:12px 15px;border:1px solid #bab3b3;border-top-color:#c4bbbb; border-radius:3px;font-size:12px;font-family:"微软雅黑";zoom:1;position:relative;display:inline-block',
         '.webform-alert-icon': ' position:absolute;width:0;height:0;border:6px solid #c4bbbb;border-top-color:transparent;border-left-color:transparent;border-right-color:transparent;top:-12px;left:10px;z-index:2;_display:none',
         '.webform-alert-icon2': ' border-bottom-color:#fff;top:-11px;',
-        '.webform-title': 'color:gray;margin-left:5px;'
+        '.webform-title': 'color:gray;margin-left:5px;font-style:normal'
     };
 
     var gradient = [
@@ -34,11 +34,11 @@
     var inputElem = document.createElement('input');
 
     var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
-    var methods = ['required', 'pattern', 'email', 'minlength', 'maxlength', 'number', 'min', 'max'];
+    var methods = ['required', 'pattern', 'email', 'minlength', 'maxlength', 'number', 'min', 'max', 'url'];
 
     function getTitle(input) {
         var $el = $(input);
-        return $el.attr('title') ? '：<span class="webform-title">' + $el.attr('title') : '</span>';
+        return $el.attr('title') ? '：<i class="webform-title">' + $el.attr('title') + '</i>' : '';
     }
 
     function format(template) {
@@ -114,7 +114,7 @@
     };
 
     Alert.prototype = {
-        timeout: 500000,
+        timeout: 5000,
 
         init: function(text, $el) {
             if (this.dialog) return;
@@ -454,6 +454,20 @@
         return true;
     };
 
+    Webform.prototype.url = function($el) {
+        if ($el.attr('type') !== 'url') {
+            return true;
+        }
+        var value = $el.val();
+        var reg = /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+        if (!reg.test(value)) {
+            var text = this.options.messages.url + getTitle($el);
+            this.alert(text, $el);
+            return false;
+        }
+        return true;
+    };
+
     $.fn.webform = function(options) {
         this.each(function() {
             var data = $(this).data('webform');
@@ -481,7 +495,8 @@
         maxlength: '最多输入{0}个字符',
         number: '请输入一个数字',
         min: '值必须大于或等于{0}',
-        max: '值必须小于或等于{0}'
+        max: '值必须小于或等于{0}',
+        url: '请输入正确的网址'
     };
 
     $.fn.webform.addMethod = function(method, fn) {
