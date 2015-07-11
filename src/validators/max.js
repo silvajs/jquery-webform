@@ -5,7 +5,7 @@ module.exports = function($el) {
     var value = parseFloat($el.val());
     var max = parseFloat($el.attr('max'));
     if (value > max) {
-        var text = this.getMessage('max', $el);
+        var text = this.getMessage('max', max);
         this.alert(text, $el);
         return false;
     }

@@ -5,7 +5,7 @@ module.exports = function($el) {
 
     var reg = new RegExp($el.attr('pattern'));
     if ($el.val().length > 0 && !reg.test($el.val())) {
-        var text = this.getMessage('pattern', $el);
+        var text = this.getMessage('pattern');
         this.alert(text, $el);
         return false;
     }

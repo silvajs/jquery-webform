@@ -5,7 +5,7 @@ module.exports = function($el) {
     var minlength = parseInt($el.attr('minlength'));
     var value = $el.val();
     if (value.length < minlength) {
-        var text = this.getMessage('minlength', $el);
+        var text = this.getMessage('minlength', minlength);
         this.alert(text, $el);
         return false;
     }

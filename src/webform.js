@@ -90,13 +90,14 @@ Webform.prototype.runValidator = function($el) {
 	return true;
 };
 
-Webform.prototype.alert = function(text, input) {
+Webform.prototype.alert = function(text, $el) {
 	if (this.alertDialog) {
 		this.alertDialog.remove();
 	}
-	$(input).attr('autocomplete', this.options.autocomplete);
-	this.alertDialog = new Alert(text, input);
-	input.focus();
+	//$el.attr('autocomplete', this.options.autocomplete);
+	text += getTitle($el);
+	this.alertDialog = new Alert(text, $el);
+	$el.focus();
 };
 
 Webform.prototype.removeAlert = function() {
@@ -106,12 +107,11 @@ Webform.prototype.removeAlert = function() {
 	}
 };
 
-Webform.prototype.getMessage = function(name, $el, value) {
+Webform.prototype.getMessage = function(name) {
 	var lang = this.options.lang;
-	var msg = format(this.options.messages[lang][name]);
-	if ($el) {
-		return msg + getTitle($el);
-	}
+	var template = this.options.messages[lang][name];
+	var params = Array.prototype.slice.call(arguments, 1);
+	var msg = format.apply(null, [template].concat(params));
 	return msg;
 };
 

@@ -5,7 +5,7 @@ module.exports = function($el) {
     var value = parseFloat($el.val());
     var min = parseFloat($el.attr('min'));
     if (value < min) {
-        var text = this.getMessage('min', $el);
+        var text = this.getMessage('min', min);
         this.alert(text, $el);
         return false;
     }

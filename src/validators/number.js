@@ -6,7 +6,7 @@ module.exports = function($el) {
     }
     var value = $el.val();
     if (!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) || (hasValue($el) && value.length === 0)) {
-        var text = this.getMessage('number', $el);
+        var text = this.getMessage('number');
         this.alert(text, $el);
         return false;
     }

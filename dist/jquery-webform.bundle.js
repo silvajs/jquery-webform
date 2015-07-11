@@ -215,13 +215,14 @@
 		return true;
 	};
 
-	Webform.prototype.alert = function(text, input) {
+	Webform.prototype.alert = function(text, $el) {
 		if (this.alertDialog) {
 			this.alertDialog.remove();
 		}
-		$(input).attr('autocomplete', this.options.autocomplete);
-		this.alertDialog = new Alert(text, input);
-		input.focus();
+		//$el.attr('autocomplete', this.options.autocomplete);
+		text += getTitle($el);
+		this.alertDialog = new Alert(text, $el);
+		$el.focus();
 	};
 
 	Webform.prototype.removeAlert = function() {
@@ -231,12 +232,11 @@
 		}
 	};
 
-	Webform.prototype.getMessage = function(name, $el, value) {
+	Webform.prototype.getMessage = function(name) {
 		var lang = this.options.lang;
-		var msg = format(this.options.messages[lang][name]);
-		if ($el) {
-			return msg + getTitle($el);
-		}
+		var template = this.options.messages[lang][name];
+		var params = Array.prototype.slice.call(arguments, 1);
+		var msg = format.apply(null, [template].concat(params));
 		return msg;
 	};
 
@@ -493,31 +493,30 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Webform = __webpack_require__(3);
-	var required = __webpack_require__(12);
-	var email = __webpack_require__(13);
-	var number = __webpack_require__(16);
-	var min = __webpack_require__(17);
-	var max = __webpack_require__(15);
-	var minlength = __webpack_require__(18);
-	var maxlength = __webpack_require__(19);
-	var url = __webpack_require__(20);
-	var pattern = __webpack_require__(14);
+	var required = __webpack_require__(13);
+	var email = __webpack_require__(14);
+	var number = __webpack_require__(15);
+	var min = __webpack_require__(16);
+	var max = __webpack_require__(12);
+	var minlength = __webpack_require__(17);
+	var maxlength = __webpack_require__(18);
+	var url = __webpack_require__(19);
+	var pattern = __webpack_require__(20);
 
 	Webform.addValidators(required, email, pattern, number, min, max, minlength, maxlength, url);
 
 /***/ },
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var hasValue = __webpack_require__(8).hasValue;
+/***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if (!$el.attr('required')) {
+	    if (!$el.attr('max')) {
 	        return true;
 	    }
-
-	    if (!hasValue($el)) {
-	        var text = this.getMessage('required', $el);
+	    var value = parseFloat($el.val());
+	    var max = parseFloat($el.attr('max'));
+	    if (value > max) {
+	        var text = this.getMessage('max', max);
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -526,15 +525,16 @@
 
 /***/ },
 /* 13 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
+
+	var hasValue = __webpack_require__(8).hasValue;
 
 	module.exports = function($el) {
-	    if ($el.attr('type') !== 'email') {
+	    if (!$el.attr('required')) {
 	        return true;
 	    }
-	    var value = $el.val();
-	    if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
-	        var text = this.getMessage('email', $el);
+	    if (!hasValue($el)) {
+	        var text = this.getMessage('required');
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -546,13 +546,12 @@
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if (!$el.attr('pattern')) {
+	    if ($el.attr('type') !== 'email') {
 	        return true;
 	    }
-
-	    var reg = new RegExp($el.attr('pattern'));
-	    if ($el.val().length > 0 && !reg.test($el.val())) {
-	        var text = this.getMessage('pattern', $el);
+	    var value = $el.val();
+	    if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(value)) {
+	        var text = this.getMessage('email');
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -561,24 +560,6 @@
 
 /***/ },
 /* 15 */
-/***/ function(module, exports) {
-
-	module.exports = function($el) {
-	    if (!$el.attr('max')) {
-	        return true;
-	    }
-	    var value = parseFloat($el.val());
-	    var max = parseFloat($el.attr('max'));
-	    if (value > max) {
-	        var text = this.getMessage('max', $el);
-	        this.alert(text, $el);
-	        return false;
-	    }
-	    return true;
-	};
-
-/***/ },
-/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(8).hasValue;
@@ -589,7 +570,25 @@
 	    }
 	    var value = $el.val();
 	    if (!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value) || (hasValue($el) && value.length === 0)) {
-	        var text = this.getMessage('number', $el);
+	        var text = this.getMessage('number');
+	        this.alert(text, $el);
+	        return false;
+	    }
+	    return true;
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = function($el) {
+	    if (!$el.attr('min')) {
+	        return true;
+	    }
+	    var value = parseFloat($el.val());
+	    var min = parseFloat($el.attr('min'));
+	    if (value < min) {
+	        var text = this.getMessage('min', min);
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -601,13 +600,13 @@
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if (!$el.attr('min')) {
+	    if (!$el.attr('minlength')) {
 	        return true;
 	    }
-	    var value = parseFloat($el.val());
-	    var min = parseFloat($el.attr('min'));
-	    if (value < min) {
-	        var text = this.getMessage('min', $el);
+	    var minlength = parseInt($el.attr('minlength'));
+	    var value = $el.val();
+	    if (value.length < minlength) {
+	        var text = this.getMessage('minlength', minlength);
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -619,13 +618,13 @@
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if (!$el.attr('minlength')) {
+	    if (!$el.attr('maxlength')) {
 	        return true;
 	    }
-	    var minlength = parseInt($el.attr('minlength'));
+	    var maxlength = parseInt($el.attr('maxlength'));
 	    var value = $el.val();
-	    if (value.length < minlength) {
-	        var text = this.getMessage('minlength', $el);
+	    if (value.length > maxlength) {
+	        var text = this.getMessage('maxlength', maxlength);
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -637,13 +636,13 @@
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if (!$el.attr('maxlength')) {
+	    if ($el.attr('type') !== 'url') {
 	        return true;
 	    }
-	    var maxlength = parseInt($el.attr('maxlength'));
 	    var value = $el.val();
-	    if (value.length > maxlength) {
-	        var text = this.getMessage('maxlength', $el);
+	    var reg = /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
+	    if (!reg.test(value)) {
+	        var text = this.getMessage('url');
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -655,13 +654,13 @@
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
-	    if ($el.attr('type') !== 'url') {
+	    if (!$el.attr('pattern')) {
 	        return true;
 	    }
-	    var value = $el.val();
-	    var reg = /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;
-	    if (!reg.test(value)) {
-	        var text = this.getMessage('url', $el);
+
+	    var reg = new RegExp($el.attr('pattern'));
+	    if ($el.val().length > 0 && !reg.test($el.val())) {
+	        var text = this.getMessage('pattern');
 	        this.alert(text, $el);
 	        return false;
 	    }
