@@ -1,4 +1,4 @@
-var hasValue = require('./util').hasValue;
+var hasValue = require('../util').hasValue;
 
 module.exports = function() {
     if (this.input.placeholder || !this.options.placeholder) return;

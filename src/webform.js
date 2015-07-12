@@ -118,13 +118,11 @@ Webform.prototype.getMessage = function(name) {
 Webform.addMethods = function() {
 	var fns = $.makeArray(arguments);
 	methods = methods.concat(fns);
-	return this;
 };
 
 Webform.addValidators = function() {
 	var fns = $.makeArray(arguments);
 	validators = validators.concat(fns);
-	return this;
 };
 
 module.exports = Webform;

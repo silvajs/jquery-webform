@@ -1,10 +1,10 @@
 require('./css-load');
 var Webform = require('./webform');
-var placeholder = require('./placeholder');
-var autofocus = require('./autofocus');
-require('./validate');
+var methods = require('./methods/index');
+var validators = require('./validators/index');
 
-Webform.addMethods(placeholder, autofocus);
+Webform.addMethods.apply(null, methods);
+Webform.addValidators.apply(null, validators);
 
 $.fn.webform = function(options) {
 	this.each(function() {
