@@ -1,6 +1,7 @@
 var methods = [
 	require('./autofocus'),
-	require('./placeholder')
+	require('./placeholder'),
+	require('./autocomplete')
 ];
 
 module.exports = methods;

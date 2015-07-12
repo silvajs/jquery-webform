@@ -94,7 +94,6 @@ Webform.prototype.alert = function(text, $el) {
 	if (this.alertDialog) {
 		this.alertDialog.remove();
 	}
-	//$el.attr('autocomplete', this.options.autocomplete);
 	text += getTitle($el);
 	this.alertDialog = new Alert(text, $el);
 	$el.focus();

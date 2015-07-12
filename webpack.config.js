@@ -6,8 +6,8 @@ module.exports = {
 		'jquery-webform': './index'
 	},
 	output: {
-		path: __dirname + '/dist',
-		filename: '[name].bundle.js'
+		path: __dirname,
+		filename: '[name].js'
 	},
 	module: {
 		loaders: [{
