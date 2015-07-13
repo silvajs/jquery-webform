@@ -67,6 +67,24 @@ jquery-webform
 
 ## API
 
+当传入参数来初始化时，可以这样使用：
+
+```
+$('form').webform();
+```
+
+具体的配置可以在`src/config.js`看到
+
+```
+var defaults = {
+    forceSimulate: false,
+    placeholder: true,
+    autocomplete: 'off',
+    lang: 'zh',
+    messages: messages
+};
+```
+
 #### forceSimulate
 *boolean* - default: `false`
 
