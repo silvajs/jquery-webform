@@ -25,7 +25,7 @@ jquery-webform
 ## 依赖
 
 - jquery
-- [html5shiv](https://github.com/aFarkas/html5shiv)
+- [html5shiv](https://github.com/aFarkas/html5shiv) - *兼容IE8*
 
 如果兼容IE8，同时使用了bootstrap，需要添加[Respond](https://github.com/scottjehl/Respond)。
 列如：
@@ -39,8 +39,19 @@ jquery-webform
 
 ## Demo
 
-请查看例子：[jquery-webform demo](http://htmlpreview.github.io/?https://github.com/silvajs/jquery-webform/blob/master/demo.html)
+请查看例子：[jquery-webform demo](http://htmlpreview.github.io/?https://github.com/silvajs/jquery-webform/blob/master/demo/index.html)
 
+
+## 开发
+
+开发的时候只需要编写`src`目录下的js文件，然后通过webpack来打包生成jquery-webform.js文件，具体步骤如下
+
+- 安装[nodejs](https://nodejs.org/)
+- 安装[webpack](http://webpack.github.io)，使用npm进行安装`npm install webpack -g`
+- 进入项目根目录
+    - `webpack --watch`：当src下的文件被改变的时候，自动重新生成jquery-webform.js
+    - `webpack`：只执行一次动作，生成jquery-webform.js
+- 可以打开/demo/webform.html页面，调试最新的代码
 
 
 ## API
@@ -68,7 +79,7 @@ jquery-webform
 在表单验证不通过时，给出的提示信息，可支持多语言。同理与html5的提示信息，也会获取元素上的title值作为提示信息的部分内容
 
 ```
-$.fn.webform.messages = {
+{
     required: '请填写此字段',
     pattern: '请匹配要求的格式',
     email: '请输入有效的邮箱地址',
