@@ -67,10 +67,8 @@ Webform.prototype.runValidator = function($el) {
 };
 
 Webform.prototype.alert = function(text, $el) {
-	if (this.alertDialog) {
-		this.alertDialog.remove();
-	}
 	text += getTitle($el);
+	this.removeAlert();
 	this.alertDialog = new Alert(text, $el);
 	$el.focus();
 };

@@ -7,7 +7,7 @@ Alert.prototype = {
     timeout: 5000,
 
     init: function(text, $el) {
-        if (this.dialog) return;
+        this.remove();
 
         var offset = this.$el.offset(),
             x = offset.left + 5,
@@ -37,9 +37,14 @@ Alert.prototype = {
     },
 
     remove: function() {
-        this.dialog && this.dialog.remove();
-        this.dialog = null;
-        this.timer && clearTimeout(this.timer);
+        if (this.dialog) {
+            this.dialog.remove();
+            this.dialog = null;
+        }
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = null;
+        }
         this.off();
     },
 
@@ -55,7 +60,6 @@ Alert.prototype = {
                 }
             }, 0);
         });
-        return this;
     },
 
     off: function() {
@@ -68,16 +72,6 @@ Alert.prototype = {
             me.remove();
             me.timer = null;
         }, this.timeout);
-    },
-
-    resetTimer: function() {
-        this.timer && clearTimeout(this.timer);
-        this.setTimer();
-    },
-
-    content: function(text) {
-        if (!this.dialog) return;
-        this.dialog.find('.webform-alert-content').html(text);
     }
 };
 
