@@ -157,7 +157,6 @@
 	Webform.prototype.registeEvents = function() {
 		var me = this;
 		this.$form.on('submit', function(e) {
-			e.preventDefault();
 			return me.runValidators();
 		});
 		this.$form.on('click', '[type="submit"]', function(e) {
