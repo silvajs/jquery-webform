@@ -64,10 +64,10 @@ $('form').webform();
 
 多语言支持的代码在`src/i18n`目录下，可以新增和自定义提示信息。那么如何使用多语言呢？
 
-采用什么语言有以下优先级，从高到低：
+jquery-webform会自动从html中判断该使用什么语言，判断的优先级从高到低：
 
-- 如果在页面含有`<html lang="zh">`，则使用中文
-- 如果在页面含有`<meta http-equiv="Content-Language" content="zh">`，则使用中文
+- 如果在页面含有`<html lang="zh">`，则使用中文(zh)
+- 如果在页面含有`<meta http-equiv="Content-Language" content="zh">`，则使用中文(zh)
 - 以上都没有的时候，采用`src/config.js`里默认的语言，如`lang: 'zh'`
 
 
@@ -105,7 +105,7 @@ var defaults = {
 #### lang
 *string* - default: 'zh'
 
-当表单验证不通过时给出提示信息，该提示性使用的语言。有哪些指可以查看`src/i18n/messages.js`
+当表单验证不通过时给出提示信息，该提示性使用的语言。具体的参数值可以查看`src/i18n/messages.js`
 
 ```
 var messages = {
