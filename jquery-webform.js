@@ -531,12 +531,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var validators = [
-		__webpack_require__(17),
 		__webpack_require__(18),
 		__webpack_require__(19),
 		__webpack_require__(20),
 		__webpack_require__(21),
 		__webpack_require__(22),
+		__webpack_require__(17),
 		__webpack_require__(23),
 		__webpack_require__(24),
 		__webpack_require__(25),
@@ -548,6 +548,24 @@
 
 /***/ },
 /* 17 */
+/***/ function(module, exports) {
+
+	module.exports = function($el) {
+	    if (!$el.attr('minlength')) {
+	        return true;
+	    }
+	    var minlength = parseInt($el.attr('minlength'));
+	    var value = $el.val();
+	    if (value.length < minlength) {
+	        var text = this.getMessage('minlength', minlength);
+	        this.alert(text, $el);
+	        return false;
+	    }
+	    return true;
+	};
+
+/***/ },
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(9).hasValue;
@@ -565,7 +583,7 @@
 	};
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -582,7 +600,7 @@
 	};
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(9).hasValue;
@@ -601,7 +619,7 @@
 	};
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -619,7 +637,7 @@
 	};
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -630,24 +648,6 @@
 	    var max = parseFloat($el.attr('max'));
 	    if (value > max) {
 	        var text = this.getMessage('max', max);
-	        this.alert(text, $el);
-	        return false;
-	    }
-	    return true;
-	};
-
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	module.exports = function($el) {
-	    if (!$el.attr('minlength')) {
-	        return true;
-	    }
-	    var minlength = parseInt($el.attr('minlength'));
-	    var value = $el.val();
-	    if (value.length < minlength) {
-	        var text = this.getMessage('minlength', minlength);
 	        this.alert(text, $el);
 	        return false;
 	    }
@@ -718,6 +718,10 @@
 			return true;
 		}
 		var $equalTo = $(equalTo);
+		if ($equalTo.length === 0) {
+			this.alert('<b>Error</b>: the value of "equalTo" attribute must be jquery selector', $el);
+			return false;
+		}
 		if ($el.val() !== $equalTo.val()) {
 			var text = this.getMessage('equalTo');
 			this.alert(text, $el);
