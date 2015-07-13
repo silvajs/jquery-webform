@@ -47,7 +47,7 @@
 	__webpack_require__(1);
 	var Webform = __webpack_require__(3);
 	var methods = __webpack_require__(10);
-	var validators = __webpack_require__(14);
+	var validators = __webpack_require__(16);
 
 	Webform.addMethods.apply(null, methods);
 	Webform.addValidators.apply(null, validators);
@@ -128,8 +128,6 @@
 	var getTitle = __webpack_require__(9).getTitle;
 	var format = __webpack_require__(9).format;
 
-	var inputElem = document.createElement('input');
-	var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
 	var methods = [];
 	var validators = [];
 
@@ -144,28 +142,8 @@
 		if (this.options.forceSimulate) {
 			this.$form.attr('novalidate', 'novalidate');
 		}
-		this.setLang();
-		this.setInput(html5Attrs);
 		this.runMethods();
 		this.registeEvents();
-	};
-
-	Webform.prototype.setLang = function() {
-		var lang = $('html').attr('lang');
-		if (!lang) {
-			lang = $('meta[http-equiv="Content-Language"]').attr('content');
-		}
-		this.options.lang = lang || config.lang;
-	};
-
-	Webform.prototype.setInput = function(props) {
-		this.input = {};
-		for (var i = 0, len = props.length; i < len; i++) {
-			this.input[props[i]] = !!(props[i] in inputElem);
-		}
-		if (this.input.list) {
-			this.input.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
-		}
 	};
 
 	Webform.prototype.runMethods = function() {
@@ -438,13 +416,46 @@
 	var methods = [
 		__webpack_require__(11),
 		__webpack_require__(12),
-		__webpack_require__(13)
+		__webpack_require__(13),
+		__webpack_require__(14),
+		__webpack_require__(15)
 	];
 
 	module.exports = methods;
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	module.exports = function() {
+		var lang = $('html').attr('lang');
+		if (!lang) {
+			lang = $('meta[http-equiv="Content-Language"]').attr('content');
+		}
+		if (lang) {
+			this.options.lang = lang;	
+		}
+	};
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	var inputElem = document.createElement('input');
+	var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
+
+	module.exports = function() {
+		this.input = {};
+		for (var i = 0, len = html5Attrs.length; i < len; i++) {
+			this.input[html5Attrs[i]] = !!(html5Attrs[i] in inputElem);
+		}
+		if (this.input.list) {
+			this.input.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
+		}
+	};
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = function() {
@@ -456,7 +467,7 @@
 	};
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(9).hasValue;
@@ -514,7 +525,7 @@
 	};
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = function() {
@@ -526,26 +537,26 @@
 	};
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var validators = [
-		__webpack_require__(15),
-		__webpack_require__(16),
 		__webpack_require__(17),
 		__webpack_require__(18),
 		__webpack_require__(19),
 		__webpack_require__(20),
 		__webpack_require__(21),
 		__webpack_require__(22),
-		__webpack_require__(23)
+		__webpack_require__(23),
+		__webpack_require__(24),
+		__webpack_require__(25)
 	];
 
 	module.exports = validators;
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(9).hasValue;
@@ -563,7 +574,7 @@
 	};
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -580,7 +591,7 @@
 	};
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var hasValue = __webpack_require__(9).hasValue;
@@ -599,7 +610,7 @@
 	};
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -617,7 +628,7 @@
 	};
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -635,7 +646,7 @@
 	};
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -653,7 +664,7 @@
 	};
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -671,7 +682,7 @@
 	};
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -689,7 +700,7 @@
 	};
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {

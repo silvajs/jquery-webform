@@ -3,8 +3,6 @@ var config = require('./config');
 var getTitle = require('./util').getTitle;
 var format = require('./util').format;
 
-var inputElem = document.createElement('input');
-var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
 var methods = [];
 var validators = [];
 
@@ -19,28 +17,8 @@ Webform.prototype.init = function(form) {
 	if (this.options.forceSimulate) {
 		this.$form.attr('novalidate', 'novalidate');
 	}
-	this.setLang();
-	this.setInput(html5Attrs);
 	this.runMethods();
 	this.registeEvents();
-};
-
-Webform.prototype.setLang = function() {
-	var lang = $('html').attr('lang');
-	if (!lang) {
-		lang = $('meta[http-equiv="Content-Language"]').attr('content');
-	}
-	this.options.lang = lang || config.lang;
-};
-
-Webform.prototype.setInput = function(props) {
-	this.input = {};
-	for (var i = 0, len = props.length; i < len; i++) {
-		this.input[props[i]] = !!(props[i] in inputElem);
-	}
-	if (this.input.list) {
-		this.input.list = !!(document.createElement('datalist') && window.HTMLDataListElement);
-	}
 };
 
 Webform.prototype.runMethods = function() {
