@@ -46,8 +46,8 @@
 
 	__webpack_require__(1);
 	var Webform = __webpack_require__(3);
-	var methods = __webpack_require__(9);
-	var validators = __webpack_require__(13);
+	var methods = __webpack_require__(10);
+	var validators = __webpack_require__(14);
 
 	Webform.addMethods.apply(null, methods);
 	Webform.addValidators.apply(null, validators);
@@ -125,8 +125,8 @@
 
 	var Alert = __webpack_require__(4);
 	var config = __webpack_require__(5);
-	var getTitle = __webpack_require__(8).getTitle;
-	var format = __webpack_require__(8).format;
+	var getTitle = __webpack_require__(9).getTitle;
+	var format = __webpack_require__(9).format;
 
 	var inputElem = document.createElement('input');
 	var html5Attrs = 'autocomplete autofocus list placeholder max min multiple pattern required step maxlength minlength'.split(' ');
@@ -361,10 +361,9 @@
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var zh = __webpack_require__(7);
-
 	var messages = {
-		'zh': zh
+		'zh': __webpack_require__(7),
+		'en': __webpack_require__(8)
 	};
 
 	module.exports = messages;
@@ -387,6 +386,23 @@
 
 /***/ },
 /* 8 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		required: 'This field is required',
+		pattern: 'Invalid forma',
+		email: 'Please enter a valid email address',
+		url: 'Please enter a valid URL',
+		number: 'Please enter a valid number',
+		equalTo: 'Please enter the same value again',
+		maxlength: 'Please enter no more than {0} characters',
+		minlength: 'Please enter at least {0} characters',
+		max: 'Please enter a value less than or equal to {0}',
+		min: 'Please enter a value greater than or equal to {0}'
+	}
+
+/***/ },
+/* 9 */
 /***/ function(module, exports) {
 
 	exports.getTitle = function(input) {
@@ -416,19 +432,19 @@
 	}
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var methods = [
-		__webpack_require__(10),
 		__webpack_require__(11),
-		__webpack_require__(12)
+		__webpack_require__(12),
+		__webpack_require__(13)
 	];
 
 	module.exports = methods;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = function() {
@@ -440,10 +456,10 @@
 	};
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var hasValue = __webpack_require__(8).hasValue;
+	var hasValue = __webpack_require__(9).hasValue;
 
 	module.exports = function() {
 	    if (this.input.placeholder || !this.options.placeholder) return;
@@ -498,7 +514,7 @@
 	};
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = function() {
@@ -510,11 +526,10 @@
 	};
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var validators = [
-		__webpack_require__(14),
 		__webpack_require__(15),
 		__webpack_require__(16),
 		__webpack_require__(17),
@@ -522,17 +537,18 @@
 		__webpack_require__(19),
 		__webpack_require__(20),
 		__webpack_require__(21),
-		__webpack_require__(22)
+		__webpack_require__(22),
+		__webpack_require__(23)
 	];
 
 	module.exports = validators;
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var hasValue = __webpack_require__(8).hasValue;
+	var hasValue = __webpack_require__(9).hasValue;
 
 	module.exports = function($el) {
 	    if (!$el.attr('required')) {
@@ -547,7 +563,7 @@
 	};
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -564,10 +580,10 @@
 	};
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var hasValue = __webpack_require__(8).hasValue;
+	var hasValue = __webpack_require__(9).hasValue;
 
 	module.exports = function($el) {
 	    if ($el.attr('type') !== 'number') {
@@ -583,7 +599,7 @@
 	};
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -601,7 +617,7 @@
 	};
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -619,7 +635,7 @@
 	};
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -637,7 +653,7 @@
 	};
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -655,7 +671,7 @@
 	};
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {
@@ -673,7 +689,7 @@
 	};
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = function($el) {

@@ -1,7 +1,6 @@
-var zh = require('./zh');
-
 var messages = {
-	'zh': zh
+	'zh': require('./zh'),
+	'en': require('./en')
 };
 
 module.exports = messages;
