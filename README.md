@@ -5,6 +5,12 @@ jquery-webform
 
 在提交表单时，利用html5的表单验证策略，如果浏览器支持html5则使用原生的表单验证，如果不支持，则模拟出一样的验证效果。
 
+最简单的使用：
+
+```
+$('form').webform();
+```
+
 目前支持的input type：
 
 - *email*
@@ -66,12 +72,6 @@ jquery-webform
 
 
 ## API
-
-当传入参数来初始化时，可以这样使用：
-
-```
-$('form').webform();
-```
 
 具体的配置可以在`src/config.js`看到
 
