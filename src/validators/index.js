@@ -7,7 +7,8 @@ var validators = [
 	require('./minlength'),
 	require('./maxlength'),
 	require('./url'),
-	require('./pattern')
+	require('./pattern'),
+	require('./equalTo')
 ];
 
 module.exports = validators;

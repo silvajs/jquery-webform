@@ -348,7 +348,8 @@
 		number: '请输入一个数字',
 		min: '值必须大于或等于{0}',
 		max: '值必须小于或等于{0}',
-		url: '请输入正确的网址'
+		url: '请输入正确的网址',
+		equalTo: '请输入相同的值'
 	};
 
 /***/ },
@@ -538,7 +539,8 @@
 		__webpack_require__(22),
 		__webpack_require__(23),
 		__webpack_require__(24),
-		__webpack_require__(25)
+		__webpack_require__(25),
+		__webpack_require__(26)
 	];
 
 	module.exports = validators;
@@ -704,6 +706,24 @@
 	        return false;
 	    }
 	    return true;
+	};
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	module.exports = function($el) {
+		var equalTo = $el.attr('equalTo');
+		if (!equalTo) {
+			return true;
+		}
+		var $equalTo = $(equalTo);
+		if ($el.val() !== $equalTo.val()) {
+			var text = this.getMessage('equalTo');
+			this.alert(text, $el);
+			return false;
+		}
+		return true;
 	};
 
 /***/ }
