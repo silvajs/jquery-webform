@@ -7,13 +7,12 @@ var methods = [];
 var validators = [];
 
 var Webform = function(form, options) {
-	var me = this;
+	this.$form = $(form);
 	this.options = $.extend(true, {}, config, options || {});
 	this.init(form);
 };
 
 Webform.prototype.init = function(form) {
-	this.$form = $(form);
 	if (this.options.forceSimulate) {
 		this.$form.attr('novalidate', 'novalidate');
 	}

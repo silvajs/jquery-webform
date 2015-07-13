@@ -17,7 +17,6 @@ Alert.prototype = {
     },
 
     add: function(text, x, y) {
-        var me = this;
         var html = ['<div class="webform-alert">',
             '<div class="webform-alert-icon"></div>',
             '<div class="webform-alert-icon webform-alert-icon2"></div>',

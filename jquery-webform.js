@@ -132,13 +132,12 @@
 	var validators = [];
 
 	var Webform = function(form, options) {
-		var me = this;
+		this.$form = $(form);
 		this.options = $.extend(true, {}, config, options || {});
 		this.init(form);
 	};
 
 	Webform.prototype.init = function(form) {
-		this.$form = $(form);
 		if (this.options.forceSimulate) {
 			this.$form.attr('novalidate', 'novalidate');
 		}
@@ -252,7 +251,6 @@
 	    },
 
 	    add: function(text, x, y) {
-	        var me = this;
 	        var html = ['<div class="webform-alert">',
 	            '<div class="webform-alert-icon"></div>',
 	            '<div class="webform-alert-icon webform-alert-icon2"></div>',
