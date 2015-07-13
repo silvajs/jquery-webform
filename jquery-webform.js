@@ -452,7 +452,7 @@
 		if (this.input.autofocus) return;
 
 		setTimeout(function() {
-			$('[autofocus]').last().textFocus();
+			$('[autofocus]').last().focus();
 		}, 0);
 	};
 
