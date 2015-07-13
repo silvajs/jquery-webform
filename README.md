@@ -102,6 +102,18 @@ var defaults = {
 - `on`: 同input元素上的autocomplete属性
 - `off`: 同input元素上的autocomplete属性
 
+#### lang
+*string* - default: 'zh'
+
+当表单验证不通过时给出提示信息，该提示性使用的语言。有哪些指可以查看`src/i18n/messages.js`
+
+```
+var messages = {
+    'zh': require('./zh'),
+    'en': require('./en')
+};
+```
+
 #### messages
 *object*
 
