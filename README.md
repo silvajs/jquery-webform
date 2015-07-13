@@ -54,6 +54,17 @@ jquery-webform
 - 可以打开/demo/webform.html页面，调试最新的代码
 
 
+## 多语言支持 - i18n
+
+多语言支持的代码在`src/i18n`目录下，可以新增和自定义提示信息。那么如何使用多语言呢？
+
+采用什么语言有以下优先级，从高到低：
+
+- 如果在html页面的`<html lang="zh">`，则使用中文
+- 如果在页面含有`<meta http-equiv="Content-Language" content="zh">`，则使用中文
+- 以上都没有的时候，采用`src/config.js`里默认的语言，如`lang: 'zh'`
+
+
 ## API
 
 #### forceSimulate
