@@ -169,11 +169,13 @@
 
 	Webform.prototype.runValidators = function() {
 		var form = this.$form.get(0);
-		var inputs = $.grep(form.elements, function(elem, i) {
-			return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
-		});
-		for (var i = 0; i < inputs.length; i++) {
-			var $el = $(inputs[i]);
+		if (!this.elems) {
+			this.elems = $.grep(form.elements, function(elem, i) {
+				return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
+			});
+		}
+		for (var i = 0; i < this.elems.length; i++) {
+			var $el = $(this.elems[i]);
 			if (!this.runValidator($el)) {
 				return false;
 			}
@@ -452,7 +454,7 @@
 		if (this.input.autofocus) return;
 
 		setTimeout(function() {
-			$('[autofocus]').last().focus();
+			//$('[autofocus]').last().textFocus();
 		}, 0);
 	};
 
