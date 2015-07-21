@@ -138,11 +138,11 @@
 	};
 
 	Webform.prototype.init = function(form) {
+		this.runMethods();
+		this.registeEvents();
 		if (this.options.forceSimulate) {
 			this.$form.attr('novalidate', 'novalidate');
 		}
-		this.runMethods();
-		this.registeEvents();
 	};
 
 	Webform.prototype.runMethods = function() {
@@ -159,9 +159,6 @@
 		this.$form.on('submit', function(e) {
 			return me.runValidators();
 		});
-		this.$form.on('click', '[type="submit"]', function(e) {
-			e.stopPropagation();
-		});
 		$(document).click(function() {
 			me.removeAlert();
 		});
@@ -169,6 +166,10 @@
 
 	Webform.prototype.runValidators = function() {
 		var form = this.$form.get(0);
+		if (form.novalidate) {
+			return true;
+		}
+		
 		if (!this.elems) {
 			this.elems = $.grep(form.elements, function(elem, i) {
 				return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);
@@ -401,6 +402,16 @@
 	    return false;
 	}
 
+	exports.noValidate = function(form) {
+	    if (typeof form.noValidate !== 'undefined') {
+	        return form.noValidate;
+	    }
+	    if ($(form).attr('novalidate')) {
+	        return true;
+	    }
+	    return false;
+	}
+
 /***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
@@ -410,7 +421,8 @@
 		__webpack_require__(12),
 		__webpack_require__(13),
 		__webpack_require__(14),
-		__webpack_require__(15)
+		__webpack_require__(15),
+		__webpack_require__(27)
 	];
 
 	module.exports = methods;
@@ -730,6 +742,37 @@
 			return false;
 		}
 		return true;
+	};
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var util = __webpack_require__(9);
+
+	module.exports = function() {
+
+		var form = this.$form.get(0);
+		var formAttr = {
+			action: form.action,
+			enctype: form.enctype,
+			method: form.method,
+			novalidate: util.noValidate(form),
+			target: form.target
+		};
+
+		function overrideForm($btn) {
+			form.action = $btn.attr('formaction') || formAttr.action;
+			form.enctype = $btn.attr('formenctype') || formAttr.enctype;
+			form.method = $btn.attr('formmethod') || formAttr.method;
+			form.novalidate = $btn.attr('formnovalidate') ? Boolean($btn.attr('formnovalidate')) : formAttr.novalidate;
+			form.target = $btn.attr('formtarget') || formAttr.target;
+		}
+
+		this.$form.on('click', '[type="submit"]', function(e) {
+			overrideForm($(e.currentTarget));
+			e.stopPropagation();
+		});
 	};
 
 /***/ }

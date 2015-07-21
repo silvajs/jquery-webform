@@ -13,11 +13,11 @@ var Webform = function(form, options) {
 };
 
 Webform.prototype.init = function(form) {
+	this.runMethods();
+	this.registeEvents();
 	if (this.options.forceSimulate) {
 		this.$form.attr('novalidate', 'novalidate');
 	}
-	this.runMethods();
-	this.registeEvents();
 };
 
 Webform.prototype.runMethods = function() {
@@ -34,9 +34,6 @@ Webform.prototype.registeEvents = function() {
 	this.$form.on('submit', function(e) {
 		return me.runValidators();
 	});
-	this.$form.on('click', '[type="submit"]', function(e) {
-		e.stopPropagation();
-	});
 	$(document).click(function() {
 		me.removeAlert();
 	});
@@ -44,6 +41,10 @@ Webform.prototype.registeEvents = function() {
 
 Webform.prototype.runValidators = function() {
 	var form = this.$form.get(0);
+	if (form.novalidate) {
+		return true;
+	}
+	
 	if (!this.elems) {
 		this.elems = $.grep(form.elements, function(elem, i) {
 			return !$(elem).is(":disabled") && /^(?:input|textarea)/i.test(elem.nodeName);

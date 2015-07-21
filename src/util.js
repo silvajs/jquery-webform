@@ -23,3 +23,13 @@ exports.hasValue = function($el) {
     }
     return false;
 }
+
+exports.noValidate = function(form) {
+    if (typeof form.noValidate !== 'undefined') {
+        return form.noValidate;
+    }
+    if ($(form).attr('novalidate')) {
+        return true;
+    }
+    return false;
+}
