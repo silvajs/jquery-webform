@@ -19,17 +19,17 @@ $('form').webform();
 
 目前支持的html5属性有：
 
-- *novalidate*
-- *autofocus*
-- *placeholder*
-- *required*
-- *pattern*
-- *minlength*
-- *maxlength*
-- *min*
-- *max*
-- *equalTo* - *非html5属性，但是很有用*
-- *form overrides*
+- novalidate
+- autofocus
+- placeholder
+- required
+- pattern
+- minlength
+- maxlength
+- min
+- max
+- equalTo - *非html5属性，但是很有用*
+- form overrides
   - formaction - *重写表单的 action 属性*
   - formenctype - *重写表单的 enctype 属性*
   - formmethod - *重写表单的 method 属性*
