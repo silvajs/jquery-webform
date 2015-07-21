@@ -30,11 +30,11 @@ $('form').webform();
 - *max*
 - *equalTo* - *非html5属性，但是很有用*
 - *form overrides*
-  - formaction - 重写表单的 action 属性
-  - formenctype - 重写表单的 enctype 属性
-  - formmethod - 重写表单的 method 属性
-  - formnovalidate - 重写表单的 novalidate 属性
-  - formtarget - 重写表单的 target 属性
+  - formaction - *重写表单的 action 属性*
+  - formenctype - *重写表单的 enctype 属性*
+  - formmethod - *重写表单的 method 属性*
+  - formnovalidate - *重写表单的 novalidate 属性*
+  - formtarget - *重写表单的 target 属性*
 
 
 ## 依赖
