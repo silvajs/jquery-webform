@@ -7,7 +7,7 @@ module.exports = function() {
 		action: form.action,
 		enctype: form.enctype,
 		method: form.method,
-		novalidate: util.noValidate(form),
+		noValidate: util.noValidate(form),
 		target: form.target
 	};
 
@@ -15,7 +15,7 @@ module.exports = function() {
 		form.action = $btn.attr('formaction') || formAttr.action;
 		form.enctype = $btn.attr('formenctype') || formAttr.enctype;
 		form.method = $btn.attr('formmethod') || formAttr.method;
-		form.novalidate = $btn.attr('formnovalidate') ? Boolean($btn.attr('formnovalidate')) : formAttr.novalidate;
+		form.novalidate = $btn.attr('formnovalidate') ? Boolean($btn.attr('formnovalidate')) : formAttr.noValidate;
 		form.target = $btn.attr('formtarget') || formAttr.target;
 	}
 
